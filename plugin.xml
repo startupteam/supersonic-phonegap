@@ -1,0 +1,25 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+    <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="uk.mondosports.plugins.supersonic" version="0.0.1">
+    <name>Supersonic</name>
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+    <description>Supersonic Ads Phonegap Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,supersonic,ads,offerwall</keywords>
+    <js-module src="www/supersonic.js" name="Supersonic">
+        <clobbers target="window.plugins.supersonic" />
+    </js-module>
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Supersonic">
+                <param name="android-package" value="uk.mondosports.plugins.supersonic.SupersonicPlugin"/>
+            </feature>
+        </config-file>
+
+        <source-file src="android/SupersonicPlugin.java" target-dir="src/uk/mondosports/plugins/supersonic" />
+        <source-file src="android/ssa-sdk-5.9.jar" target-dir="libs" />
+    </platform>
+</plugin>
