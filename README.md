@@ -1,8 +1,6 @@
 supersonic-phonegap
 ===================
 
-# supersonic-phonegap
-
 > Supersonic plugin for Android. This allows you to show the Supersonic Offerwall on you app.
 
 ## Preparation:

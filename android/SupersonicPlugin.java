@@ -28,12 +28,13 @@ OnOfferWallListener {
     private static final String DEFAULT_APP_KEY = "32c9d67d";
 
     private static final String ACTION_INITIALIZE = "initialize";
-    private static final String ACTION_SHOW_OFFERWALL = "showOfferWall";
+    private static final String ACTION_SHOW_OFFERWALL = "showOfferwall";
+    private static final String ACTION_SHOW_REWARDEDVIDEO = "showRewardedVideo";
     private static final String OPT_APPLICATION_KEY = "appKey";
     private static final String OPT_USER_ID = "userId";
 
     private String appKey = DEFAULT_APP_KEY;
-    private String userId = "";
+    private String userId = "5043b715c3bd823b760000ff";
     private SSAPublisher ssaPub; 
 
     @Override
@@ -46,6 +47,9 @@ OnOfferWallListener {
         } else if (ACTION_SHOW_OFFERWALL.equals(action)) {
             JSONObject options = args.optJSONObject(0);
             result = executeShowOfferwall(options, callbackContext);
+        } else if (ACTION_SHOW_REWARDEDVIDEO.equals(action)) {
+            JSONObject options = args.optJSONObject(0);
+            result = executeShowRewardedVideo(options, callbackContext);
         }
 
         if (result != null) callbackContext.sendPluginResult( result );
@@ -89,12 +93,15 @@ OnOfferWallListener {
     }
 
     private void initialize( JSONObject options ) {
-        if(options == null) return;
+        //if(options == null) return;
         
         if(options.has(OPT_APPLICATION_KEY)) this.appKey = options.optString( OPT_APPLICATION_KEY );
         if(options.has(OPT_USER_ID)) this.userId = options.optString( OPT_USER_ID );
 
         ssaPub = SSAFactory.getPublisherInstance(this.webView.getContext());
+        
+        Map<String, String> params = null; 
+        ssaPub.initRewardedVideo(appKey, userId, params, this);
     }
 
     private PluginResult executeShowOfferwall(JSONObject options, CallbackContext callbackContext) {
@@ -110,6 +117,20 @@ OnOfferWallListener {
     private void showOfferWall(JSONObject options) {
         Map<String, String> extraParams = new HashMap<String, String>();
         ssaPub.showOfferWall(this.appKey, this.userId, extraParams, this);
+    }
+    
+    private PluginResult executeShowRewardedVideo(JSONObject options, CallbackContext callbackContext) {
+        Log.w(LOGTAG, "executeShowRewardedVideo");
+        
+        this.showRewardedVideo( );
+        
+        callbackContext.success();
+
+        return null;
+    }
+
+    private void showRewardedVideo() {
+        ssaPub.showRewardedVideo();
     }
 
     @Override
@@ -211,12 +232,12 @@ OnOfferWallListener {
     @Override
     public void onRVInitSuccess(AdUnitsReady arg0) {
         // TODO Auto-generated method stub
-        
+        Log.w(LOGTAG, "onRVInitSuccess");
     }
 
     @Override
     public void onRVNoMoreOffers() {
         // TODO Auto-generated method stub
-        
+        Log.w(LOGTAG, "onRVNoMoreOffers");
     }
 }
