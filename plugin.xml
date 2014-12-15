@@ -12,6 +12,8 @@
         <clobbers target="window.plugins.supersonic" />
     </js-module>
 
+    <dependency id="com.google.playservices" url="https://github.com/MobileChromeApps/google-play-services.git"/>
+
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Supersonic">
