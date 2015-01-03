@@ -12,9 +12,9 @@
         <clobbers target="window.plugins.supersonic" />
     </js-module>
 
-    <dependency id="com.google.playservices" url="https://github.com/MobileChromeApps/google-play-services.git"/>
-
     <platform name="android">
+        <dependency id="com.google.playservices" url="https://github.com/MobileChromeApps/google-play-services.git"/>
+        
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Supersonic">
                 <param name="android-package" value="uk.mondosports.plugins.supersonic.SupersonicPlugin"/>
