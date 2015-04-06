@@ -103,9 +103,6 @@ OnOfferWallListener {
 		if(options.has(OPT_USER_ID)) this.userId = options.optString( OPT_USER_ID );
 
 		ssaPub = SSAFactory.getPublisherInstance(this.webView.getContext());
-
-		Map<String, String> params = null;
-		ssaPub.initRewardedVideo(appKey, userId, params, this);
 	}
 
 	private PluginResult executeShowOfferwall(JSONObject options, CallbackContext callbackContext) {
@@ -134,6 +131,9 @@ OnOfferWallListener {
 	}
 
 	private void showRewardedVideo() {
+		Map<String, String> params = null;
+		ssaPub.initRewardedVideo(this.appKey, this.userId, params, this);
+
 		ssaPub.showRewardedVideo();
 	}
 
