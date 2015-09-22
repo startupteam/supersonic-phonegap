@@ -102,7 +102,7 @@ OnOfferWallListener {
 		if(options.has(OPT_APPLICATION_KEY)) this.appKey = options.optString( OPT_APPLICATION_KEY );
 		if(options.has(OPT_USER_ID)) this.userId = options.optString( OPT_USER_ID );
 
-		ssaPub = SSAFactory.getPublisherInstance(this.webView.getContext());
+		ssaPub = SSAFactory.getPublisherInstance(this.cordova.getActivity());
 	}
 
 	private PluginResult executeShowOfferwall(JSONObject options, CallbackContext callbackContext) {
@@ -175,43 +175,48 @@ OnOfferWallListener {
 	}
 
 	@Override
-	public void onISAdClosed() {
+	public void onInterstitialInitSuccess() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onISGeneric(String arg0, String arg1) {
+	public void onInterstitialInitFail(String s) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onISInitFail(String arg0) {
+	public void onInterstitialShowSuccess() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onISInitSuccess() {
+	public void onInterstitialShowFail(java.lang.String s) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onISLoaded() {
+	public void onInterstitialAvailability(boolean b) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void onISLoadedFail(String arg0) {
+	public void onInterstitialAdClosed() {
 		// TODO Auto-generated method stub
+	}
 
+	@Override
+	public void onInterstitialAdClicked() {
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onRVAdClosed() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRVAdOpened() {
 		// TODO Auto-generated method stub
 
 	}

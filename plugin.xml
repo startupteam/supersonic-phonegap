@@ -34,6 +34,6 @@
         </config-file>
 
         <source-file src="android/SupersonicPlugin.java" target-dir="src/uk/mondosports/plugins/supersonic" />
-        <source-file src="android/ssa-sdk-5.9.jar" target-dir="libs/" />
+        <source-file src="android/mediationsdk-6.2.2.jar" target-dir="libs/" />
     </platform>
 </plugin>
