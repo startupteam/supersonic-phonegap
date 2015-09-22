@@ -190,7 +190,7 @@ OnOfferWallListener {
 	}
 
 	@Override
-	public void onInterstitialShowFail(java.lang.String s) {
+	public void onInterstitialShowFail(String s) {
 		// TODO Auto-generated method stub
 	}
 
