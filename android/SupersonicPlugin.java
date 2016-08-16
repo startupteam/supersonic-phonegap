@@ -5,11 +5,10 @@ import java.util.Map;
 
 import android.util.Log;
 
-import com.supersonicads.sdk.*;
-import com.supersonicads.sdk.data.AdUnitsReady;
-import com.supersonicads.sdk.listeners.OnInterstitialListener;
-import com.supersonicads.sdk.listeners.OnOfferWallListener;
-import com.supersonicads.sdk.listeners.OnRewardedVideoListener;
+import com.supersonic.mediationsdk.logger.SupersonicError;
+import com.supersonic.mediationsdk.sdk.OfferwallListener;
+import com.supersonic.mediationsdk.sdk.Supersonic;
+import com.supersonic.mediationsdk.sdk.SupersonicFactory;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -19,10 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SupersonicPlugin extends CordovaPlugin implements 
-OnRewardedVideoListener,
-OnInterstitialListener,
-OnOfferWallListener {
+public class SupersonicPlugin extends CordovaPlugin
+{
 
 	private static final String LOGTAG = "SupersonicPlugin";
 	private static final String DEFAULT_APP_KEY = "32c9d67d";
@@ -30,14 +27,13 @@ OnOfferWallListener {
 	private static final String ACTION_INITIALIZE = "initialize";
 	private static final String ACTION_SHOW_OFFERWALL = "showOfferwall";
 	private static final String ACTION_CLOSE_OFFERWALL = "closeOfferwall";
-	private static final String ACTION_SHOW_REWARDEDVIDEO = "showRewardedVideo";
 	private static final String OPT_APPLICATION_KEY = "appKey";
 	private static final String OPT_USER_ID = "userId";
 
 	private String appKey = DEFAULT_APP_KEY;
 	private String userId = "5043b715c3bd823b760000ff";
-	private SSAPublisher ssaPub;
-	private CallbackContext closeOWCallback;
+	private Supersonic mMediationAgent;
+	private CallbackContext closeOfferwallCallback;
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -50,10 +46,7 @@ OnOfferWallListener {
 			JSONObject options = args.optJSONObject(0);
 			result = executeShowOfferwall(options, callbackContext);
 		} else if (ACTION_CLOSE_OFFERWALL.equals(action)) {
-			closeOWCallback = callbackContext;
-		} else if (ACTION_SHOW_REWARDEDVIDEO.equals(action)) {
-			JSONObject options = args.optJSONObject(0);
-			result = executeShowRewardedVideo(options, callbackContext);
+            closeOfferwallCallback = callbackContext;
 		}
 
 		if (result != null) callbackContext.sendPluginResult( result );
@@ -86,29 +79,64 @@ OnOfferWallListener {
 		}
 	}*/
 
-	private PluginResult executeInitialize(JSONObject options, CallbackContext callbackContext) {
+	private PluginResult executeInitialize(final JSONObject options, final CallbackContext callbackContext) {
 		Log.w(LOGTAG, "executeInitialize");
 
-		this.initialize( options );
+		cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                initialize(options);
 
-		callbackContext.success();
+                callbackContext.success();
+            }
+        });
 
 		return null;
 	}
 
-	private void initialize( JSONObject options ) {
-		//if(options == null) return;
+	private void initialize(JSONObject options) {
 
-		if(options.has(OPT_APPLICATION_KEY)) this.appKey = options.optString( OPT_APPLICATION_KEY );
-		if(options.has(OPT_USER_ID)) this.userId = options.optString( OPT_USER_ID );
+		if (options.has(OPT_APPLICATION_KEY)) {
+			this.appKey = options.optString(OPT_APPLICATION_KEY);
+		}
 
-		ssaPub = SSAFactory.getPublisherInstance(this.cordova.getActivity());
+		if(options.has(OPT_USER_ID)) {
+			this.userId = options.optString(OPT_USER_ID);
+		}
+
+		OfferwallListener mOfferwallListener = new OfferwallListener()
+		{
+			public void onOfferwallInitSuccess() {}
+
+			public void onOfferwallInitFail(SupersonicError error) {}
+
+			public void onOfferwallOpened() {}
+
+			public void onOfferwallShowFail(SupersonicError supersonicError) {}
+
+			public boolean onOfferwallAdCredited(int credits, int totalCredits, boolean totalCreditsFlag) {
+				return false;
+			}
+
+			public void onGetOfferwallCreditsFail(SupersonicError supersonicError) {}
+
+			public void onOfferwallClosed() {
+				Log.w(LOGTAG, "onOfferwallClosed");
+
+				closeOfferwallCallback.success();
+			}
+		};
+
+		mMediationAgent = SupersonicFactory.getInstance();
+
+		mMediationAgent.setOfferwallListener(mOfferwallListener);
+
+		mMediationAgent.initOfferwall(this.cordova.getActivity(), this.appKey, this.userId);
 	}
 
 	private PluginResult executeShowOfferwall(JSONObject options, CallbackContext callbackContext) {
 		Log.w(LOGTAG, "executeShowOfferwall");
 
-		this.showOfferWall( options );
+		showOfferWall(options);
 
 		callbackContext.success();
 
@@ -116,138 +144,10 @@ OnOfferWallListener {
 	}
 
 	private void showOfferWall(JSONObject options) {
-		Map<String, String> extraParams = new HashMap<String, String>();
-		ssaPub.showOfferWall(this.appKey, this.userId, extraParams, this);
-	}
+		Log.w(LOGTAG, "isOfferwallAvailable" + mMediationAgent.isOfferwallAvailable());
 
-	private PluginResult executeShowRewardedVideo(JSONObject options, CallbackContext callbackContext) {
-		Log.w(LOGTAG, "executeShowRewardedVideo");
-
-		this.showRewardedVideo( );
-
-		callbackContext.success();
-
-		return null;
-	}
-
-	private void showRewardedVideo() {
-		Map<String, String> params = null;
-		ssaPub.initRewardedVideo(this.appKey, this.userId, params, this);
-
-		ssaPub.showRewardedVideo();
-	}
-
-	@Override
-	public void onOWAdClosed() {
-		Log.w(LOGTAG, "onOWAdClosed");
-
-		closeOWCallback.success();
-	}
-
-	@Override
-	public void onGetOWCreditsFailed(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean onOWAdCredited(int arg0, int arg1, boolean arg2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onOWGeneric(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onOWShowFail(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onOWShowSuccess() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onInterstitialInitSuccess() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onInterstitialInitFail(String s) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onInterstitialShowSuccess() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onInterstitialShowFail(String s) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onInterstitialAvailability(boolean b) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onInterstitialAdClosed() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onInterstitialAdClicked() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onRVAdClosed() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRVAdOpened() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRVAdCredited(int arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRVGeneric(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRVInitFail(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRVInitSuccess(AdUnitsReady arg0) {
-		// TODO Auto-generated method stub
-		Log.w(LOGTAG, "onRVInitSuccess");
-	}
-
-	@Override
-	public void onRVNoMoreOffers() {
-		// TODO Auto-generated method stub
-		Log.w(LOGTAG, "onRVNoMoreOffers");
+        if (mMediationAgent.isOfferwallAvailable()) {
+            mMediationAgent.showOfferwall();
+        }
 	}
 }

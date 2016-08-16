@@ -1,6 +1,6 @@
  <?xml version="1.0" encoding="UTF-8"?>
     <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-supersonicads" version="0.1.0">
+        id="cordova-plugin-supersonicads" version="1.0.0">
     <name>Supersonic</name>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
@@ -34,6 +34,18 @@
         </config-file>
 
         <source-file src="android/SupersonicPlugin.java" target-dir="src/uk/mondosports/plugins/supersonic" />
-        <source-file src="android/mediationsdk-6.2.2.jar" target-dir="libs/" />
+        <source-file src="android/mediationsdk-6.4.11.jar" target-dir="libs/" />
+
+        <proguard-config>
+            keepclassmembers class com.supersonicads.sdk.controller.SupersonicWebView$JSInterface {
+                public *;
+            }
+            -keepclassmembers class * implements android.os.Parcelable {
+                public static final android.os.Parcelable$Creator *;
+            }
+            -keep public class com.google.android.gms.ads.** {
+                public *;
+            }
+        </proguard-config>
     </platform>
 </plugin>
