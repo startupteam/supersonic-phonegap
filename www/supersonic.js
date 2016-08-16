@@ -12,8 +12,4 @@ SupersonicPlugin.prototype.closeOfferwall = function (success, error) {
 	cordova.exec(success, error, 'Supersonic', 'closeOfferwall', []);
 };
 
-SupersonicPlugin.prototype.showRewardedVideo = function (success, error) {
-	cordova.exec(success, error, 'Supersonic', 'showRewardedVideo', []);
-};
-
 module.exports = new SupersonicPlugin();
