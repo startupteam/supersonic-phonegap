@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-supersonicads" version="1.0.0">
+        id="cordova-plugin-supersonicads" version="2.0.0">
     <name>Supersonic</name>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
     <description>Supersonic Ads Phonegap Plugin</description>
     <license>Apache 2.0</license>
-    <keywords>cordova,supersonic,ads,offerwall</keywords>
+    <keywords>cordova,supersonic,ironsource,ads,offerwall</keywords>
     <js-module src="www/supersonic.js" name="Supersonic">
         <clobbers target="window.plugins.supersonic" />
     </js-module>
@@ -24,28 +24,29 @@
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET" />
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity android:name="com.supersonicads.sdk.controller.ControllerActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" />
-            <activity android:name="com.supersonicads.sdk.controller.InterstitialActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent" />
-            <activity android:name="com.supersonicads.sdk.controller.OpenUrlActivity" android:configChanges="orientation|screenSize" android:hardwareAccelerated="true"/>
+            <meta-data android:name="com.google.android.gms.version"
+                       android:value="@integer/google_play_services_version" />
+
+            <activity
+                    android:name="com.ironsource.sdk.controller.ControllerActivity"
+                    android:configChanges="orientation|screenSize"
+                    android:hardwareAccelerated="true" />
+            <activity
+                    android:name="com.ironsource.sdk.controller.InterstitialActivity"
+                    android:configChanges="orientation|screenSize"
+                    android:hardwareAccelerated="true"
+                    android:theme="@android:style/Theme.Translucent" />
+            <activity
+                    android:name="com.ironsource.sdk.controller.OpenUrlActivity"
+                    android:configChanges="orientation|screenSize"
+                    android:hardwareAccelerated="true"
+                    android:theme="@android:style/Theme.Translucent" />
         </config-file>
 
         <source-file src="android/SupersonicPlugin.java" target-dir="src/uk/mondosports/plugins/supersonic" />
-        <source-file src="android/mediationsdk-6.4.11.jar" target-dir="libs/" />
-
-        <proguard-config>
-            keepclassmembers class com.supersonicads.sdk.controller.SupersonicWebView$JSInterface {
-                public *;
-            }
-            -keepclassmembers class * implements android.os.Parcelable {
-                public static final android.os.Parcelable$Creator *;
-            }
-            -keep public class com.google.android.gms.ads.** {
-                public *;
-            }
-        </proguard-config>
+        <source-file src="android/mediationsdk-6.6.0.jar" target-dir="libs/" />
     </platform>
 </plugin>

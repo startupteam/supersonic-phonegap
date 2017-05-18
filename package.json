@@ -1,0 +1,11 @@
+{
+  "name": "cordova-plugin-supersonicads",
+  "version": "2.0.0",
+  "cordova": {
+    "id": "cordova-plugin-supersonicads",
+    "platforms": [
+      "android"
+    ]
+  },
+  "description": "Cordova plugin for ironsource"
+}
